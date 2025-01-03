@@ -9,7 +9,7 @@ router.post(
     check("username", "Username is required")
       .isString()
       .notEmpty()
-      .isLength({ min: 4, max: 16 }),
+      .isLength({ min: 3, max: 16 }),
     check("password").notEmpty().isStrongPassword({
       minLength: 6,
       minNumbers: 1,
