@@ -7,10 +7,11 @@ import cookieParser from "cookie-parser";
 import routes from "./routes/index";
 const app = express();
 
+console.log("frontend url :", process.env.FRONTEND_URL as string);
 // basic setup
 app.use(
   cors({
-    origin: process.env.FRONTEND_URL,
+    origin: process.env.FRONTEND_URL as string,
     credentials: true,
   })
 );
