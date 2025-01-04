@@ -57,3 +57,52 @@ export const searchUsers = async (query: string) => {
   }
   return body;
 };
+
+export const incomingFriendRequests = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/friend-requests/incoming`, {
+    credentials: "include",
+    method: "GET",
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error);
+  }
+  return body;
+};
+
+export const sendFriendRequest = async (userId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/friend-requests/send`, {
+    credentials: "include",
+    method: "POST",
+    body: JSON.stringify(userId),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error);
+  }
+  return body;
+};
+export const acceptFriendRequest = async (userId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/friend-requests/accept`, {
+    credentials: "include",
+    method: "POST",
+    body: JSON.stringify(userId),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error);
+  }
+  return body;
+};
+export const rejectFriendRequest = async (userId: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/friend-requests/reject`, {
+    credentials: "include",
+    method: "POST",
+    body: JSON.stringify(userId),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error);
+  }
+  return body;
+};

@@ -22,7 +22,7 @@ export const searchUsers = async (
         .status(404)
         .json({ message: "No User Exits with such username" });
     }
-    return res.status(200).json({ users });
+    return res.status(200).json(users);
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: "Error Searching for users", e });

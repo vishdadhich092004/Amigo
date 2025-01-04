@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { registerUser } from "../api-clients";
 import { useNavigate } from "react-router-dom";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 export interface RegisterFormData {
   username: string;
   password: string;
@@ -35,8 +38,8 @@ function NewUser() {
       <div className="p-3 m-3">
         <form onSubmit={onSubmit}>
           <div className="mb-2">
-            <label htmlFor="username">Username</label>
-            <input
+            <Label htmlFor="username">Username</Label>
+            <Input
               type="text"
               id="username"
               placeholder="Enter a username"
@@ -57,8 +60,8 @@ function NewUser() {
             )}
           </div>
           <div className="mb-2">
-            <label htmlFor="password">Password</label>
-            <input
+            <Label htmlFor="password">Password</Label>
+            <Input
               type="password"
               id="password"
               placeholder="Enter a Strong Password"
@@ -70,9 +73,9 @@ function NewUser() {
               <p className="text-sm text-black">{errors.password.message}</p>
             )}
           </div>
-          <button type="submit" className="p-3 m-3 bg-blue-200">
+          <Button type="submit" className="p-3 m-3 bg-blue-200">
             Create User
-          </button>
+          </Button>
         </form>
       </div>
     </div>

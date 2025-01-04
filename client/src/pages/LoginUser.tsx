@@ -2,6 +2,9 @@ import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
 import { useNavigate } from "react-router-dom";
 import { loginUser } from "../api-clients";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 
 export interface LoginFormData {
   username: string;
@@ -34,8 +37,8 @@ function LoginUser() {
       <div className="p-3 m-3">
         <form onSubmit={onSubmit}>
           <div className="mb-2">
-            <label htmlFor="username">Username</label>
-            <input
+            <Label htmlFor="username">Username</Label>
+            <Input
               type="text"
               id="username"
               placeholder="Enter a username"
@@ -56,8 +59,8 @@ function LoginUser() {
             )}
           </div>
           <div className="mb-2">
-            <label htmlFor="password">Password</label>
-            <input
+            <Label htmlFor="password">Password</Label>
+            <Input
               type="password"
               id="password"
               placeholder="Enter a Strong Password"
@@ -69,9 +72,9 @@ function LoginUser() {
               <p className="text-sm text-black">{errors.password.message}</p>
             )}
           </div>
-          <button type="submit" className="p-3 m-3 bg-blue-200">
+          <Button type="submit" className="p-3 m-3 bg-blue-200">
             Login User
-          </button>
+          </Button>
         </form>
       </div>
     </div>
