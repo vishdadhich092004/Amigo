@@ -2,8 +2,11 @@ export type UserType = {
   _id: string;
   username: string;
   password: string;
-  friends: UserType[];
-  friendRequests: UserType[];
+  friends: string[];
+  friendRequests: string[];
   profileAvatar: string;
   setRandomAvatar: () => void;
+  sendFriendRequest: (userId: string) => void;
+  acceptFriendRequest: (userId: string) => void;
+  rejectFriendRequest: (userId: string) => void;
 };

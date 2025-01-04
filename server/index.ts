@@ -5,6 +5,7 @@ import cors from "cors";
 import { dbConfig } from "./db/db.config";
 import cookieParser from "cookie-parser";
 import routes from "./routes/allRoutes";
+// import { seedUsers } from "./seeds/userSeeds";
 const app = express();
 
 // basic setup
@@ -29,6 +30,11 @@ const connectMongo = async () => {
   await dbConfig();
 };
 connectMongo();
+
+// const seed = async () => {
+//   await seedUsers();
+// };
+// seed();
 
 const PORT = process.env.PORT || 3000;
 
