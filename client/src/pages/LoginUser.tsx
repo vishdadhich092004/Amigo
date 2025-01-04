@@ -1,37 +1,36 @@
 import { useForm } from "react-hook-form";
 import { useMutation } from "react-query";
-import { registerUser } from "../api-clients";
 import { useNavigate } from "react-router-dom";
-export interface RegisterFormData {
+import { loginUser } from "../api-clients";
+
+export interface LoginFormData {
   username: string;
   password: string;
 }
-
-function NewUser() {
+function LoginUser() {
   const navigate = useNavigate();
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<RegisterFormData>();
+  } = useForm<LoginFormData>();
 
-  const mutation = useMutation(registerUser, {
+  const mutation = useMutation(loginUser, {
     onSuccess: async (data) => {
       navigate("/");
-      alert("User Created");
+      alert("User Logged In");
       console.log(data);
     },
     onError: (e) => {
       console.error(e);
     },
   });
-
   const onSubmit = handleSubmit((data) => {
     mutation.mutate(data);
   });
   return (
     <div className="flex flex-col">
-      <h1>New User</h1>
+      <h1>Login</h1>
       <div className="p-3 m-3">
         <form onSubmit={onSubmit}>
           <div className="mb-2">
@@ -71,7 +70,7 @@ function NewUser() {
             )}
           </div>
           <button type="submit" className="p-3 m-3 bg-blue-200">
-            Create User
+            Login User
           </button>
         </form>
       </div>
@@ -79,4 +78,4 @@ function NewUser() {
   );
 }
 
-export default NewUser;
+export default LoginUser;

@@ -8,6 +8,11 @@ function HomePage() {
           New User
         </Link>
       </div>
+      <div className="m-2 p-2">
+        <Link to="/login" className="p-3 m-3 bg-yellow-300">
+          Existing User
+        </Link>
+      </div>
     </div>
   );
 }
