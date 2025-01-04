@@ -45,3 +45,15 @@ export const validateToken = async () => {
   }
   return body;
 };
+
+export const searchUsers = async (query: string) => {
+  const response = await fetch(`${API_BASE_URL}/api/search?username=${query}`, {
+    credentials: "include",
+    method: "GET",
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error);
+  }
+  return body;
+};

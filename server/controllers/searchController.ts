@@ -11,9 +11,12 @@ export const searchUsers = async (
     if (!username || typeof username !== "string") {
       return res.status(400).json({ message: "Invalid or missing Username" });
     }
-    const users = await User.find({
-      username: { $regex: username, $options: "i" },
-    });
+    const users = await User.find(
+      {
+        username: { $regex: username, $options: "i" },
+      },
+      "-password"
+    );
     if (!users) {
       return res
         .status(404)
