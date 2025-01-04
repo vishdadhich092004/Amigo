@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 import User from "../models/user";
-import { validationResult } from "express-validator";
 import jwt from "jsonwebtoken";
 import { UserType } from "../shared/types";
 import bcrypt from "bcrypt";
+import { validationResult } from "express-validator";
 const jwtKey = (process.env.JWT_SECRET_KEY as string) || "";
 export const registerUser = async (
   req: Request,

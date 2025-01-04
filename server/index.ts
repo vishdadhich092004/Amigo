@@ -4,7 +4,7 @@ import "dotenv/config";
 import cors from "cors";
 import { dbConfig } from "./db/db.config";
 import cookieParser from "cookie-parser";
-import routes from "./routes/index";
+import routes from "./routes/allRoutes";
 const app = express();
 
 // basic setup
