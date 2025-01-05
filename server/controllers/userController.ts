@@ -113,3 +113,36 @@ export const validateToken = async (
     return res.status(500).json({ error: "Error Validating Token", e });
   }
 };
+
+export const fetchUsers = async (
+  req: Request,
+  res: Response
+): Promise<UserType[] | any> => {
+  try {
+    const user = req.user;
+    const users = await User.find({}).lean();
+    if (!users || users.length === 0) {
+      return res.status(404).json({ message: "No Users Found" });
+    }
+    // exclude the current user
+    if (user.userId) {
+      const filteredUsers = users.filter(
+        (u) => u._id.toString() !== user.userId.toString()
+      );
+      return res.status(200).json(filteredUsers);
+    }
+    return res.status(200).json(users);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: "Failed to fetch Users" });
+  }
+};
+
+export const logout = (req: Request, res: Response) => {
+  res.cookie("auth_token", "", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    expires: new Date(0),
+  });
+  res.status(200).json({ message: "Logged out successfully" });
+};

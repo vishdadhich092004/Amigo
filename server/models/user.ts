@@ -9,8 +9,26 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
+  name: {
+    type: String,
+    required: false,
+  },
+  location: {
+    type: String,
+    required: false,
+  },
+  interests: [
+    {
+      type: String,
+    },
+  ],
+  bio: {
+    type: String,
+    required: false,
+  },
   friends: [{ type: Schema.Types.ObjectId, ref: "User" }],
-  friendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  incomingFriendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
+  sentFriendRequests: [{ type: Schema.Types.ObjectId, ref: "User" }],
   profileAvatar: {
     type: String,
     default: userProfileSVGs[0],
@@ -22,76 +40,99 @@ userSchema.methods.setRandomAvatar = function () {
   this.profileAvatar = userProfileSVGs[randomIndex];
 };
 
-userSchema.methods.sendFriendRequest = async function (userId: string) {
-  if (this._id.equals(userId)) {
+userSchema.methods.sendFriendRequest = async function (receiverId: string) {
+  if (this._id.equals(receiverId)) {
     throw new Error("Cannot send a friend request to yourself.");
   }
-  if (!this.friendRequests.includes(userId)) {
-    this.friendRequests.push(userId);
-    await this.save();
+
+  // Find the receiving user
+  const receiver = await User.findById(receiverId);
+  if (!receiver) {
+    throw new Error("Recipient user not found.");
   }
-  const sender = await User.findById(userId);
-  if (!sender) {
-    throw new Error("sender user not found.");
+
+  // Check if they're already friends
+  if (this.friends.includes(receiverId)) {
+    throw new Error("You are already friends with this user.");
   }
-  if (!sender.friendRequests.includes(this._id)) {
-    sender.friendRequests.push(this._id);
-    await sender.save();
+
+  // Check if request already exists
+  if (receiver.incomingFriendRequests.includes(this._id)) {
+    throw new Error("Friend request already sent.");
   }
+
+  // Add to receiver's incoming requests
+  receiver.incomingFriendRequests.push(this._id);
+  await receiver.save();
+
+  // Add to sender's sent requests
+  this.sentFriendRequests.push(receiverId);
+  await this.save();
+
   return true;
 };
 
-userSchema.methods.acceptFriendRequest = async function (userId: string) {
-  if (!this.friendRequests.includes(userId)) {
+userSchema.methods.acceptFriendRequest = async function (senderId: string) {
+  // Check if request exists
+  if (!this.incomingFriendRequests.includes(senderId)) {
     throw new Error("No such friend request found.");
   }
-  this.friendRequests = this.friendRequests.filter(
-    (id: string) => id.toString() !== userId
-  );
-  this.friends.push(userId);
-  await this.save();
-  const sender = await User.findById(userId);
+
+  // Find the sender
+  const sender = await User.findById(senderId);
   if (!sender) {
     throw new Error("Sender user not found.");
   }
-  if (!sender.friends.includes(this._id.toString())) {
-    sender.friends.push(this._id.toString());
-    sender.friendRequests = sender.friendRequests.filter(
-      (id: string) => id.toString() !== this._id.toString()
-    );
-  }
-  await sender.save();
+
+  // Remove request from both users
+  this.incomingFriendRequests = this.incomingFriendRequests.filter(
+    (id: string) => id.toString() !== senderId
+  );
+  sender.sentFriendRequests = sender.sentFriendRequests.filter(
+    (id) => id.toString() !== this._id.toString()
+  );
+
+  // Add each user to the other's friends array
+  this.friends.push(senderId);
+  sender.friends.push(this._id);
+
+  // Save both users
+  await Promise.all([this.save(), sender.save()]);
   return true;
 };
 
-userSchema.methods.rejectFriendRequest = async function (userId: string) {
-  if (!this.friendRequests.includes(userId)) {
+userSchema.methods.rejectFriendRequest = async function (senderId: string) {
+  // Check if request exists
+  if (!this.incomingFriendRequests.includes(senderId)) {
     throw new Error("No such friend request found.");
   }
-  this.friendRequests = this.friendRequests.filter(
-    (id: string) => id.toString() !== userId
-  );
-  await this.save();
-  const sender = await User.findById(userId);
+
+  // Find the sender
+  const sender = await User.findById(senderId);
   if (!sender) {
     throw new Error("Sender user not found.");
   }
-  if (!sender.friendRequests.includes(this._id.toString())) {
-    throw new Error("User never sent a friend request.");
-  }
-  sender.friendRequests = sender.friendRequests.filter(
-    (id: string) => id.toString() !== this._id.toString()
+
+  // Remove request from both users
+  this.incomingFriendRequests = this.incomingFriendRequests.filter(
+    (id: string) => id.toString() !== senderId
   );
-  await sender.save();
+  sender.sentFriendRequests = sender.sentFriendRequests.filter(
+    (id) => id.toString() !== this._id.toString()
+  );
+
+  // Save both users
+  await Promise.all([this.save(), sender.save()]);
   return true;
 };
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password") && this.password) {
+  if (this.isModified("password")) {
     this.password = await bcrypt.hash(this.password, 10);
   }
   next();
 });
+
 const User = mongoose.model<UserType>("User", userSchema);
 
 export default User;

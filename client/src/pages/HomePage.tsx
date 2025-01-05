@@ -1,3 +1,4 @@
+import UserGrid from "@/components/UserGrid";
 import SearchUsers from "../components/SearchUsers";
 function HomePage() {
   return (
@@ -6,6 +7,7 @@ function HomePage() {
       <div className="w-50 p-3 m-3">
         <SearchUsers />
       </div>
+      <UserGrid />
     </div>
   );
 }

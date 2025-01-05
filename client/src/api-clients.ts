@@ -46,6 +46,13 @@ export const validateToken = async () => {
   return body;
 };
 
+export const signOut = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/users/logout`, {
+    credentials: "include",
+    method: "POST",
+  });
+  if (!response.ok) throw new Error("Error during Signout");
+};
 export const searchUsers = async (query: string) => {
   const response = await fetch(`${API_BASE_URL}/api/search?username=${query}`, {
     credentials: "include",
@@ -71,22 +78,32 @@ export const incomingFriendRequests = async () => {
 };
 
 export const sendFriendRequest = async (userId: string) => {
+  console.log("Sending friend request to:", userId);
+
   const response = await fetch(`${API_BASE_URL}/api/friend-requests/send`, {
-    credentials: "include",
     method: "POST",
-    body: JSON.stringify(userId),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }), // verify this matches your API expectation
+    credentials: "include",
   });
-  const body = await response.json();
+
   if (!response.ok) {
-    throw new Error(body.error);
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Failed to send friend request");
   }
-  return body;
+
+  return response.json();
 };
 export const acceptFriendRequest = async (userId: string) => {
   const response = await fetch(`${API_BASE_URL}/api/friend-requests/accept`, {
     credentials: "include",
     method: "POST",
-    body: JSON.stringify(userId),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
   });
   const body = await response.json();
   if (!response.ok) {
@@ -98,7 +115,22 @@ export const rejectFriendRequest = async (userId: string) => {
   const response = await fetch(`${API_BASE_URL}/api/friend-requests/reject`, {
     credentials: "include",
     method: "POST",
-    body: JSON.stringify(userId),
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ userId }),
+  });
+  const body = await response.json();
+  if (!response.ok) {
+    throw new Error(body.error);
+  }
+  return body;
+};
+
+export const fetchUsers = async () => {
+  const response = await fetch(`${API_BASE_URL}/api/users`, {
+    credentials: "include",
+    method: "GET",
   });
   const body = await response.json();
   if (!response.ok) {

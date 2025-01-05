@@ -1,26 +1,52 @@
 import { useMutation } from "react-query";
 import { rejectFriendRequest } from "../../api-clients";
 import { useAuthContext } from "../../contexts/AuthContext";
+import { Button } from "../ui/button";
+import { useToast } from "@/hooks/use-toast";
 
-function RejectFriendRequest(userId: string) {
+type RejectFriendRequestProps = {
+  userId: string;
+};
+function RejectFriendRequest({ userId }: RejectFriendRequestProps) {
   const { refetchUser } = useAuthContext();
-  const rejectMutation = useMutation(() => rejectFriendRequest(userId), {
-    onSuccess: () => {
-      alert("Friend Request Rejected");
-      refetchUser();
+  const { toast } = useToast();
+
+  const rejectMutation = useMutation(
+    () => {
+      if (!userId) {
+        throw new Error("Invalid user ID");
+      }
+      return rejectFriendRequest(userId);
     },
-    onError: (e) => {
-      console.error(e);
-      alert("Issue to reject friend request");
-    },
-  });
-  const handleSubmit = () => {
-    rejectMutation.mutate();
-  };
+    {
+      onSuccess: (data) => {
+        toast({
+          title: "Success",
+          description: data.message || "Friend request rejected",
+          variant: "default",
+        });
+        refetchUser();
+      },
+      onError: (error: Error) => {
+        console.error(error);
+        toast({
+          title: "Error",
+          description: error.message || "Failed to reject friend request",
+          variant: "destructive",
+        });
+      },
+    }
+  );
+  const isValidUserId = Boolean(userId && userId.trim());
   return (
-    <button onSubmit={handleSubmit} className="m-3 p-3 bg-red-700 text-white">
-      Reject
-    </button>
+    <Button
+      onClick={() => rejectMutation.mutate()}
+      variant="destructive"
+      disabled={rejectMutation.isLoading || !isValidUserId}
+      className="m-3"
+    >
+      {rejectMutation.isLoading ? "Rejecting..." : "Reject Request"}
+    </Button>
   );
 }
 

@@ -34,8 +34,8 @@ function SearchUsers() {
   const onSubmit = handleSubmit((data) => {
     searchMutation.mutate(data); // Trigger mutation with form data
   });
-  console.log(result);
 
+  console.log(result);
   return (
     <form onSubmit={onSubmit} className="flex items-center">
       <Input
@@ -57,11 +57,7 @@ function SearchUsers() {
         className="ml-2"
         disabled={searchMutation.isLoading}
       >
-        {searchMutation.isLoading ? (
-          "Searching..."
-        ) : (
-          <Search className="h-4 w-4" />
-        )}
+        <Search className="h-4 w-4" />
       </Button>
     </form>
   );
