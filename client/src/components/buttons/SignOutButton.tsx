@@ -9,7 +9,7 @@ interface SignOutButtonProps {
   children?: React.ReactNode;
 }
 
-const SignOutButton = ({ className, children }: SignOutButtonProps) => {
+const SignOutButton = ({ children }: SignOutButtonProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
